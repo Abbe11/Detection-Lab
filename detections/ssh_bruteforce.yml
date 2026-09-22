@@ -1,0 +1,20 @@
+title: SSH Brute Force Attempt
+id: 7f8e9a2b-1c3d-4e5f-9a0b-abbe11labrule
+status: experimental
+description: Many failed SSH password attempts from one source IP in a short window - classic password guessing.
+author: Abbe
+date: 2026/09/22
+logsource:
+    product: linux
+    service: sshd
+detection:
+    selection:
+        message|contains: "Failed password"
+    condition: selection | count() by src_ip > 5
+    timeframe: 1m
+falsepositives:
+    - A real user mistyping their password a few times
+level: high
+tags:
+    - attack.credential_access
+    - attack.t1110
