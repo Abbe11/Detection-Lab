@@ -1,0 +1,21 @@
+title: New Account Created With Root UID 0
+id: 3d1f8b6a-2e44-4c9a-b7a1-abbe11labrule2
+status: experimental
+description: A new user account created with UID 0 (root privileges). Legitimate new accounts never get UID 0, so this is a likely backdoor for persistence.
+author: Abbe
+date: 2026/09/24
+logsource:
+    product: linux
+    service: auth
+detection:
+    selection:
+        message|contains|all:
+            - "new user:"
+            - "UID=0"
+    condition: selection
+falsepositives:
+    - Extremely rare. At most a misconfigured account-provisioning script.
+level: critical
+tags:
+    - attack.persistence
+    - attack.t1136.001
