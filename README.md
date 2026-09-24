@@ -31,3 +31,22 @@ Invoke-Pester .\detect_bruteforce.Tests.ps1
 ## Known false positive
 
 A real user who mistypes their password several times in a row could get flagged. The threshold is set to make that unlikely, but it is worth knowing about.
+
+## Detection 2: New root account (possible backdoor)
+
+After an attacker breaks in, they often create a new user account so they can log back in later. If that account has UID 0, it has full root powers. A normal new account never gets UID 0, so one that does is a strong sign someone planted a backdoor.
+
+This detector reads the account-creation logs and flags any new user with UID 0. It does not use a threshold like the brute-force detector, because a single root backdoor is already a full compromise, so one is too many. It maps to MITRE ATT&CK T1136, Create Account.
+
+Files for this detection:
+- logs/newuser_sample.log: sample log containing a backdoor account (name "support", UID 0).
+- detect_newuser_root.ps1: the detector.
+- detections/new_root_account.yml: the same rule as a Sigma rule.
+- detect_newuser_root.Tests.ps1: a Pester test that proves it catches the backdoor.
+
+Run it:
+
+```powershell
+.\detect_newuser_root.ps1
+Invoke-Pester .\detect_newuser_root.Tests.ps1
+```

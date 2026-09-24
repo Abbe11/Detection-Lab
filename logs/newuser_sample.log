@@ -1,0 +1,3 @@
+Sep 22 03:15:02 web01 useradd[2050]: new user: name=intern1, UID=1005, GID=1005, home=/home/intern1, shell=/bin/bash
+Sep 22 04:12:33 web01 useradd[2055]: new user: name=support, UID=0, GID=0, home=/home/support, shell=/bin/bash
+Sep 22 09:40:11 web01 useradd[3120]: new user: name=jdoe, UID=1006, GID=1006, home=/home/jdoe, shell=/bin/bash
