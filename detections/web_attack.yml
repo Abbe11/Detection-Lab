@@ -1,0 +1,21 @@
+title: Web Attack Attempt - SQL Injection or Path Traversal
+id: 9c2e4a7b-5f13-4d8e-a6b2-abbe11labrule3
+status: experimental
+description: Web request containing SQL injection or path traversal patterns, typical of attackers probing public-facing apps.
+author: Abbe
+date: 2026/09/28
+logsource:
+    category: webserver
+detection:
+    keywords:
+        - "' OR "
+        - "UNION SELECT"
+        - "../"
+        - "/etc/passwd"
+    condition: keywords
+falsepositives:
+    - Security scanners run by your own team
+level: high
+tags:
+    - attack.initial_access
+    - attack.t1190
