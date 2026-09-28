@@ -1,6 +1,12 @@
-# Detection Lab: SSH Brute-Force Detection
+# Detection Lab
 
-This is a small project I built while learning detection engineering. It reads Linux SSH logs, picks out brute-force login attacks, and tells you when one of those attacks actually succeeded.
+I built this while teaching myself detection engineering. It has three detections so far, and each one comes with a PowerShell detector, a Sigma rule, a sample log, and a Pester test:
+
+1. SSH brute force, including whether the attacker got in (T1110)
+2. A new account created with root privileges, a common backdoor (T1136)
+3. Web attacks like SQL injection and path traversal (T1190)
+
+The first section below walks through the brute-force detection in detail.
 
 ## The problem it solves
 
@@ -64,3 +70,4 @@ Files:
 - detect_webattack.ps1
 - detections/web_attack.yml
 - detect_webattack.Tests.ps1
+
