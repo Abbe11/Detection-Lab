@@ -1,5 +1,7 @@
 # Detection Lab
 
+![tests](https://github.com/Abbe11/detection-lab/actions/workflows/tests.yml/badge.svg)
+
 I built this while teaching myself detection engineering. It has three detections so far, and each one comes with a PowerShell detector, a Sigma rule, a sample log, and a Pester test:
 
 1. SSH brute force, including whether the attacker got in (T1110)
@@ -70,4 +72,5 @@ Files:
 - detect_webattack.ps1
 - detections/web_attack.yml
 - detect_webattack.Tests.ps1
+
 
