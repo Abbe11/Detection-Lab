@@ -50,3 +50,17 @@ Run it:
 .\detect_newuser_root.ps1
 Invoke-Pester .\detect_newuser_root.Tests.ps1
 ```
+
+## Detection 3: Web attacks (SQL injection and path traversal)
+
+Web servers log every request. Normal visitors ask for pages like /about or /products. Attackers send strange requests to try to break the app, for example slipping ' OR '1'='1 into a URL to trick the database, or using ../../ to climb out of the site folder and read files like /etc/passwd.
+
+This detector looks for those patterns in the access log and flags the IP that sent them. There's no threshold here. Nobody types a SQL injection by accident, so one request is enough for an alert.
+
+I picked this one because it's the same kind of attack behind several flaws CISA added to its exploited list in September 2026. Sangoma Switchvox, for one, was hit through SQL injection. Maps to MITRE ATT&CK T1190, Exploit Public-Facing Application.
+
+Files:
+- logs/web_access_sample.log
+- detect_webattack.ps1
+- detections/web_attack.yml
+- detect_webattack.Tests.ps1
