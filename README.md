@@ -2,11 +2,12 @@
 
 ![tests](https://github.com/Abbe11/detection-lab/actions/workflows/tests.yml/badge.svg)
 
-I built this while teaching myself detection engineering. It has three detections so far, and each one comes with a PowerShell detector, a Sigma rule, a sample log, and a Pester test:
+I built this while teaching myself detection engineering. It has four detections so far, and each one comes with a PowerShell detector, a Sigma rule, a sample log, and a Pester test:
 
 1. SSH brute force, including whether the attacker got in (T1110)
 2. A new account created with root privileges, a common backdoor (T1136)
 3. Web attacks like SQL injection and path traversal (T1190)
+4. Impossible travel, a stolen login used from another country (T1078)
 
 The first section below walks through the brute-force detection in detail.
 
@@ -73,4 +74,23 @@ Files:
 - detections/web_attack.yml
 - detect_webattack.Tests.ps1
 
+
+
+## Detection 4: Impossible travel (stolen login)
+
+This one is different from the others. The attacker's login works. There are no failed attempts and no strange requests, because they're using a real password or a stolen session cookie. In 2026 this is one of the most common ways in, through infostealer malware and fake login pages that get around MFA.
+
+The only clue is where and when. If the same account signs in from Kenya and then from Russia 19 minutes later, one of those sign-ins isn't the real person. The detector groups sign-ins by user, puts them in time order, and compares each one with the one before it. If the country changes in under 6 hours, it raises an alert. Maps to MITRE ATT&CK T1078, Valid Accounts.
+
+Carol in the sample log is there on purpose. She signs in from Kenya and then from the UK 16 hours later. A direct flight is around 9 hours, so that's possible, and the detector leaves her alone. One of the tests checks exactly that.
+
+Known weaknesses:
+- It uses a flat 6 hour rule instead of real distances, so a quick hop to a neighbouring country (Kenya to Uganda, say) would still get flagged.
+- VPNs make people look like they're somewhere else. In real SOCs this is one of the most common false positives for this kind of alert.
+
+Files:
+- logs/signin_sample.csv
+- detect_impossible_travel.ps1
+- detections/impossible_travel.yml
+- detect_impossible_travel.Tests.ps1
 

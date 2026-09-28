@@ -1,0 +1,34 @@
+title: Successful Sign-in
+id: 5b8e1c3a-7d24-4f6b-9e0a-abbe11labbase4
+name: successful_signin
+status: experimental
+logsource:
+    category: authentication
+detection:
+    selection:
+        result: Success
+    condition: selection
+---
+title: Impossible Travel - Same User From More Than One Country Within 6 Hours
+id: 6c9f2d4b-8e35-4a7c-8f1b-abbe11labrule4
+status: experimental
+description: The same account signs in successfully from more than one country inside 6 hours, which usually means a stolen password or session.
+author: Abbe
+date: 2026/09/28
+correlation:
+    type: value_count
+    rules:
+        - successful_signin
+    group-by:
+        - user
+    timespan: 6h
+    condition:
+        field: country
+        gt: 1
+falsepositives:
+    - VPN use
+    - Short trips to neighbouring countries
+level: high
+tags:
+    - attack.initial_access
+    - attack.t1078
