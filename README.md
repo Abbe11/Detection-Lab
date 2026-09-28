@@ -2,12 +2,13 @@
 
 ![tests](https://github.com/Abbe11/detection-lab/actions/workflows/tests.yml/badge.svg)
 
-I built this while teaching myself detection engineering. It has four detections so far, and each one comes with a PowerShell detector, a Sigma rule, a sample log, and a Pester test:
+I built this while teaching myself detection engineering. It has five detections so far, and each one comes with a PowerShell detector, a Sigma rule, a sample log, and a Pester test:
 
 1. SSH brute force, including whether the attacker got in (T1110)
 2. A new account created with root privileges, a common backdoor (T1136)
 3. Web attacks like SQL injection and path traversal (T1190)
 4. Impossible travel, a stolen login used from another country (T1078)
+5. Reverse shell and crypto miner after a break-in (T1059, T1496)
 
 The first section below walks through the brute-force detection in detail.
 
@@ -93,4 +94,23 @@ Files:
 - detect_impossible_travel.ps1
 - detections/impossible_travel.yml
 - detect_impossible_travel.Tests.ps1
+
+
+## Detection 5: Reverse shell and crypto miner (post-exploitation)
+
+This is what happens right after a break-in like Detection 3. Once an attacker can run code on a server, they usually open a reverse shell to control it from far away, and often drop a crypto miner to use the server's CPU for themselves.
+
+The trick with a reverse shell is direction. Firewalls block strangers connecting in but allow the server to connect out, so the attacker makes the victim connect out to them instead. The fingerprint is a web server like nginx suddenly launching a shell (bash) that talks to an outside IP, which it has no honest reason to do. A miner like xmrig is flagged on its own, since nothing normal runs it.
+
+No threshold here. A web server spawning a shell that phones home is an attack the first time. Maps to MITRE ATT&CK T1059 and T1496.
+
+The detector leaves normal activity alone, like nginx starting php-fpm, or cron running backup.sh.
+
+Known weakness: an attacker who renames their tools or uses a shell not on the list could slip past. Real setups pair this with egress filtering, which blocks the outbound connection whatever the tool is called.
+
+Files:
+- logs/process_sample.csv
+- detect_reverse_shell.ps1
+- detections/reverse_shell.yml
+- detect_reverse_shell.Tests.ps1
 

