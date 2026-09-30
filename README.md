@@ -114,3 +114,7 @@ Files:
 - detections/reverse_shell.yml
 - detect_reverse_shell.Tests.ps1
 
+
+## Validation against a real target
+
+I tested Detection 3 against OWASP Juice Shop running locally in Docker. Sending real SQL injection and path traversal at it exposed two gaps my sample logs had hidden. Real logs URL-encode the attack, so ' OR arrives as %27%20OR, and they wrap the client IP as an IPv4-mapped IPv6 address like ::ffff:172.17.0.1. I hardened the detector to URL-decode each line before matching and to pull the IPv4 out of that format. The existing Pester test still passes, so the fix did not break the original behaviour.

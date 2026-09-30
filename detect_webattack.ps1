@@ -4,18 +4,22 @@ param(
 
 $lines = Get-Content $LogPath
 
-# Patterns that show up in web attacks (SQL injection or path traversal)
+# SQL injection or path traversal patterns
 $attackPattern = "(' OR |UNION SELECT|\.\./|/etc/passwd)"
 
-$hits = $lines | Select-String $attackPattern
+foreach ($line in $lines) {
+    # Decode URL-encoding first, so %27%20OR becomes '"'"' OR and cannot hide
+    $decoded = [System.Uri]::UnescapeDataString($line)
 
-foreach ($hit in $hits) {
-    $ip   = if ($hit.Line -match "^(\d{1,3}(\.\d{1,3}){3})") { $matches[1] } else { "unknown" }
-    $kind = if ($hit.Line -match "\.\./|/etc/passwd") { "Path traversal" } else { "SQL injection" }
-    [PSCustomObject]@{
-        SourceIP   = $ip
-        AttackType = $kind
-        Severity   = "High - web attack attempt"
-        Technique  = "T1190 Exploit Public-Facing Application"
+    if ($decoded -match $attackPattern) {
+        # Grab the first IPv4 anywhere in the line, so ::ffff: prefixes do not break it
+        $ip = if ($line -match "(\d{1,3}(\.\d{1,3}){3})") { $matches[1] } else { "unknown" }
+        $kind = if ($decoded -match "\.\./|/etc/passwd") { "Path traversal" } else { "SQL injection" }
+        [PSCustomObject]@{
+            SourceIP   = $ip
+            AttackType = $kind
+            Severity   = "High - web attack attempt"
+            Technique  = "T1190 Exploit Public-Facing Application"
+        }
     }
 }
